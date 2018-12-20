@@ -18,11 +18,11 @@
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
     NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:[NSDate date]];
     NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
-    
+
     NSPredicate *predicate = [HKQuery predicateForSamplesWithStartDate:startDate endDate:endDate options:HKQueryOptionStrictStartDate];
-    
+
     void (^completion)(NSArray *results, NSError *error);
-    
+
     completion = ^(NSArray *results, NSError *error) {
         if(results){
             callback(@[[NSNull null], results]);
@@ -34,7 +34,7 @@
             return;
         }
     };
-    
+
     [self fetchWorkoutForPredicate: predicate
                          ascending:ascending
                              limit:limit
@@ -48,25 +48,46 @@
     NSTimeInterval duration = [RCTAppleHealthKit doubleFromOptions:input key:@"duration" withDefault:(NSTimeInterval)0];
     HKQuantity *totalEnergyBurned = [RCTAppleHealthKit hkQuantityFromOptions:input valueKey:@"energyBurned" unitKey:@"energyBurnedUnit"];
     HKQuantity *totalDistance = [RCTAppleHealthKit hkQuantityFromOptions:input valueKey:@"distance" unitKey:@"distanceUnit"];
-    
-    
+
+    NSDictionary *metadataSource = [input objectForKey:@"metadata"];
+    NSMutableDictionary *metadata = nil;
+    if (metadataSource) {
+        metadata = [NSMutableDictionary dictionary];
+
+        for (NSString *key in [metadataSource keyEnumerator]) {
+            if ([key isEqualToString:@"workoutBrandName"]) {
+                metadata[HKMetadataKeyWorkoutBrandName] = [RCTAppleHealthKit stringFromOptions:metadataSource key:key withDefault:nil];
+            }
+            if ([key isEqualToString:@"indoorWorkout"]) {
+                if ([RCTAppleHealthKit boolFromOptions:metadataSource key:key withDefault:false]) {
+                    metadata[HKMetadataKeyIndoorWorkout] = @YES;
+                }
+            }
+            if (@available(iOS 11.2, *)) {
+                if ([key isEqualToString:@"maximumSpeed"]) {
+                    metadata[HKMetadataKeyMaximumSpeed] = [RCTAppleHealthKit hkQuantityFromOptions:metadataSource valueKey:key unitKey:@"maximumSpeedUnit"];
+                }
+            }
+        }
+    }
+
     HKWorkout *workout = [
-                          HKWorkout workoutWithActivityType:type startDate:startDate endDate:endDate workoutEvents:nil totalEnergyBurned:totalEnergyBurned totalDistance:totalDistance metadata: nil
+                          HKWorkout workoutWithActivityType:type startDate:startDate endDate:endDate workoutEvents:nil totalEnergyBurned:totalEnergyBurned totalDistance:totalDistance metadata: metadata
                           ];
-    
+
     void (^completion)(BOOL success, NSError *error);
-    
+
     completion = ^(BOOL success, NSError *error){
         if(!success) {
-            
+
             NSLog(@"An error occured saving the workout %@. The error was: %@.", workout, error);
             callback(@[RCTMakeError(@"An error occured saving the workout", error, nil)]);
             return;
         }
         callback(@[[NSNull null], [[workout UUID] UUIDString]]);
     };
-    
+
     [self.healthStore saveObject:workout withCompletion:completion];
-    
+
 }
 @end

@@ -245,6 +245,12 @@
     if([unitString isEqualToString:@"mgPerdL"]){
         theUnit = [HKUnit unitFromString:@"mg/dL"];
     }
+    if([unitString isEqualToString:@"km/h"]){
+        HKUnit *km = [HKUnit meterUnitWithMetricPrefix:HKMetricPrefixKilo];
+        HKUnit *hour = [HKUnit hourUnit];
+
+        theUnit = [km unitDividedByUnit:hour];
+    }
 
     if(theUnit == nil){
         theUnit = defaultValue;
@@ -325,7 +331,7 @@
 + (HKWorkoutActivityType)hkWorkoutActivityTypeFromOptions: (NSDictionary *)options key: (NSString *)key withDefault: (HKWorkoutActivityType)defaultValue {
     NSDictionary * stringToWorkoutActivityType = [RCTAppleHealthKit getStringToWorkoutActivityTypeDictionary];
     HKWorkoutActivityType activityType = defaultValue;
-    
+
     if([options objectForKey:key] && [stringToWorkoutActivityType objectForKey:[options valueForKey:key]]) {
         NSString * activityString = [options valueForKey:key];
         activityType = [(NSNumber *)[stringToWorkoutActivityType objectForKey:activityString] integerValue];
@@ -337,7 +343,7 @@
     const int outOfBoundValue = -1;
     double value = [RCTAppleHealthKit doubleFromOptions:options key:valueKey withDefault:outOfBoundValue];
     HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:options key:unitKey withDefault:nil];
-    
+
     if(unit != nil && value >= 0) {
         return [HKQuantity quantityWithUnit:unit doubleValue:value];
     }
