@@ -255,7 +255,7 @@ NSString * const WheelchairRunPace = @"WheelchairRunPace";
 NSString * const TaiChi = @"TaiChi";
 NSString * const MixedCardio = @"MixedCardio";
 NSString * const HandCycling = @"HandCycling";
-NSString * const Aerobics = @"Aerobics";
+NSString * const Other = @"Other";
 
 + (NSDictionary *)getStringToWorkoutActivityTypeDictionary {
     return @{
@@ -331,7 +331,7 @@ NSString * const Aerobics = @"Aerobics";
              TaiChi: @(HKWorkoutActivityTypeTaiChi),
              MixedCardio: @(HKWorkoutActivityTypeMixedCardio),
              HandCycling: @(HKWorkoutActivityTypeHandCycling),
-             Aerobics: @(HKWorkoutActivityTypeAerobics)
+             Other: @(HKWorkoutActivityTypeOther)
              };
 }
 
@@ -409,7 +409,7 @@ NSString * const Aerobics = @"Aerobics";
              @(HKWorkoutActivityTypeTaiChi) : TaiChi,
              @(HKWorkoutActivityTypeMixedCardio) : MixedCardio,
              @(HKWorkoutActivityTypeHandCycling) : HandCycling,
-             @(HKWorkoutActivityTypeAerobics) : Aerobics
+             @(HKWorkoutActivityTypeOther) : Other
              };
 }
 
