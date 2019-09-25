@@ -77,4 +77,5 @@ export default {
   TaiChi: 'TaiChi',
   MixedCardio: 'MixedCardio',
   HandCycling: 'HandCycling',
+  Other: 'Other'
 };
