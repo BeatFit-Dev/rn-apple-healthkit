@@ -8,6 +8,7 @@
 //
 
 #import "RCTAppleHealthKit+Utils.h"
+#import "RCTAppleHealthKit+TypesAndPermissions.h"
 
 @implementation RCTAppleHealthKit (Utils)
 
@@ -216,6 +217,12 @@
     }
     if([unitString isEqualToString:@"mgPerdL"]){
         theUnit = [HKUnit unitFromString:@"mg/dL"];
+    }
+    if([unitString isEqualToString:@"km/h"]){
+        HKUnit *km = [HKUnit meterUnitWithMetricPrefix:HKMetricPrefixKilo];
+        HKUnit *hour = [HKUnit hourUnit];
+
+        theUnit = [km unitDividedByUnit:hour];
     }
 
     if(theUnit == nil){
